@@ -1,15 +1,19 @@
 #!/usr/bin/env bash
 #
-# install.sh — WorkBuddy Skills 按需安装脚本
+# install.sh — Skillbox 按需安装脚本（通用 AI 技能库）
 #
 # 用法：
 #   ./install.sh list                    列出仓库中所有可安装的 skill
 #   ./install.sh <skill名> [skill名...]   安装指定 skill（可一次装多个）
 #   ./install.sh --link <skill名>        以软链方式安装（git pull 后自动同步更新）
 #   ./install.sh -f <skill名>            强制覆盖已存在的同名 skill
+#   ./install.sh --target <目录> <skill名>  安装到指定目录（覆盖自动检测）
 #   ./install.sh                         交互式选择安装
 #
-# 安装目标：~/.workbuddy/skills/<skill名>  （WorkBuddy 用户级技能目录）
+# 安装目标（自动检测，按优先级）：
+#   1. $SKILLS_HOME 环境变量显式指定
+#   2. 已存在的平台技能目录：~/.claude/skills > ~/.workbuddy/skills > ~/.codebuddy/skills
+#   3. 都未存在时默认 ~/.claude/skills（Claude Agent Skills 开源规范路径）
 #
 set -euo pipefail
 
@@ -17,7 +21,19 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$SCRIPT_DIR"
 PLUGINS_DIR="$REPO_ROOT/plugins"
-SKILLS_HOME="${SKILLS_HOME:-$HOME/.workbuddy/skills}"
+
+# ---------- 检测目标技能目录 ----------
+detect_skills_home() {
+  if [[ -n "${SKILLS_HOME:-}" ]]; then
+    echo "$SKILLS_HOME"; return
+  fi
+  local d
+  for d in "$HOME/.claude/skills" "$HOME/.workbuddy/skills" "$HOME/.codebuddy/skills"; do
+    [[ -d "$d" ]] && { echo "$d"; return; }
+  done
+  echo "$HOME/.claude/skills"
+}
+SKILLS_HOME="$(detect_skills_home)"
 
 # ---------- 颜色（非 TTY 时自动禁用） ----------
 if [[ -t 1 ]]; then
@@ -72,7 +88,7 @@ install_one() {
     if [[ "$force" == "1" ]]; then
       rm -rf "$dest"
     elif [[ -t 0 ]]; then
-      read -r -p "  ⚠ ~/.workbuddy/skills/$name 已存在，覆盖？[y/N] " ans || ans="n"
+      read -r -p "  ⚠ $dest 已存在，覆盖？[y/N] " ans || ans="n"
       [[ "${ans:-n}" =~ ^[Yy]$ ]] || { warn "跳过 $name"; return 0; }
       rm -rf "$dest"
     else
@@ -94,18 +110,20 @@ install_one() {
 # ---------- 主逻辑 ----------
 LINK_MODE=0; FORCE=0
 ARGS=()
-for arg in "$@"; do
-  case "$arg" in
-    --link) LINK_MODE=1 ;;
-    -f|--force) FORCE=1 ;;
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --link) LINK_MODE=1; shift ;;
+    -f|--force) FORCE=1; shift ;;
+    --target) SKILLS_HOME="$2"; shift 2 ;;
     -h|--help) head -12 "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
-    *) ARGS+=("$arg") ;;
+    *) ARGS+=("$1"); shift ;;
   esac
 done
 
 # 无参数 → 交互式选择
 interactive_install() {
   info "仓库根目录：$REPO_ROOT"
+  info "安装目标：$SKILLS_HOME"
   list_skills
   echo
   read -r -p "输入要安装的 skill 编号（多个用逗号分隔，如 1,3）：" sel
@@ -140,6 +158,7 @@ if [[ "${ARGS[0]}" == "list" ]]; then
 fi
 
 # 按名安装
+info "安装目标：$SKILLS_HOME"
 for name in "${ARGS[@]}"; do
   if is_valid_skill "$name"; then
     install_one "$name" "$LINK_MODE" "$FORCE"

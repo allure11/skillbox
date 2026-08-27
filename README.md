@@ -1,6 +1,12 @@
-# WorkBuddy Skills 仓库
+# Skillbox — 通用 AI 技能库
 
-个人 WorkBuddy AI 技能（Skills）仓库。**一个仓库管理所有技能，按需安装**——不用把几十个技能全装进环境，用到哪个装哪个。
+个人 AI 技能（Agent Skills）集合仓库。**一个仓库管理所有技能，按需安装**——不用把几十个技能全装进环境，用到哪个装哪个。
+
+技能遵循 **Claude Agent Skills 开源规范**（`SKILL.md` + frontmatter），凡是兼容该规范的工具均可使用：
+
+- **Claude Code**（`~/.claude/skills/`）
+- **CodeBuddy** / **WorkBuddy**（`~/.workbuddy/skills/` 等）
+- **Cursor** 及其它支持 Skills 规范的 AI 工具
 
 当前包含：
 
@@ -15,14 +21,14 @@
 ## 目录结构
 
 ```
-workbuddy-skills/
+skillbox/
 ├── plugins/                        # 所有技能本体，每个技能一个目录
 │   └── java-alibaba-dev-standard/
 │       ├── SKILL.md                # 技能主文件（frontmatter 含 name/description/version）
 │       └── references/             # 按需查阅的辅助文档
 ├── .codebuddy-plugin/
-│   └── marketplace.json            # 市场索引：WorkBuddy 原生按需安装靠它
-├── install.sh                      # 按需安装脚本（任何机器可用）
+│   └── marketplace.json            # [可选] CodeBuddy/WorkBuddy 市场索引
+├── install.sh                      # 按需安装脚本（任何机器、任何平台可用）
 ├── add-skill.sh                    # 发布新技能进仓库
 └── README.md
 ```
@@ -31,31 +37,38 @@ workbuddy-skills/
 
 ## 一、按需安装（两种方式任选）
 
-### 方式 A：install.sh 脚本（推荐，轻量）
+### 方式 A：install.sh 脚本（推荐，轻量、跨平台）
 
 ```bash
-git clone <你的仓库地址> workbuddy-skills
-cd workbuddy-skills
+git clone <你的仓库地址> skillbox
+cd skillbox
 
-./install.sh list                    # 查看有哪些技能
-./install.sh java-alibaba-dev-standard            # 安装指定技能
-./install.sh --link java-alibaba-dev-standard     # 软链模式：git pull 后自动同步更新
-./install.sh -f java-alibaba-dev-standard         # 强制覆盖已安装的同名技能
-./install.sh                          # 不带参数：交互式选择
+./install.sh list                                   # 查看有哪些技能
+./install.sh java-alibaba-dev-standard              # 安装指定技能
+./install.sh --link java-alibaba-dev-standard       # 软链模式：git pull 后自动同步更新
+./install.sh -f java-alibaba-dev-standard           # 强制覆盖已安装的同名技能
+./install.sh --target ~/.cursor/skills xxx          # 指定安装到某个平台目录
+./install.sh                                        # 不带参数：交互式选择
 ```
 
-安装位置：`~/.workbuddy/skills/<技能名>/`（WorkBuddy 用户级技能目录，跨项目生效）。
+**安装目标自动检测**（按优先级）：
 
-### 方式 B：WorkBuddy 市场（原生，可搜索）
+1. `SKILLS_HOME` 环境变量显式指定
+2. 已存在的平台目录：`~/.claude/skills` > `~/.workbuddy/skills` > `~/.codebuddy/skills`
+3. 都不存在时默认 `~/.claude/skills`（规范默认路径）
 
-把仓库克隆/复制到 WorkBuddy 的市场目录：
+也可以显式指定：`./install.sh --target <目录> <技能名>`。
+
+### 方式 B：CodeBuddy / WorkBuddy 市场（原生，可搜索）
+
+把仓库克隆/复制到市场目录：
 
 ```bash
 mkdir -p ~/.workbuddy/plugins/marketplaces
-git clone <你的仓库地址> ~/.workbuddy/plugins/marketplaces/workbuddy-skills
+git clone <你的仓库地址> ~/.workbuddy/plugins/marketplaces/skillbox
 ```
 
-之后在 WorkBuddy 对话中说「安装 skill」或「搜索 skill」，即可按名搜索安装仓库中的任意技能（由 `.codebuddy-plugin/marketplace.json` 索引驱动）。
+之后在对话中说「安装 skill」或「搜索 skill」，即可按名搜索安装仓库中的任意技能（由 `.codebuddy-plugin/marketplace.json` 索引驱动）。
 
 > 两种方式可并存。软链模式（`--link`）最适合自己用：本地 `git pull` 一次，所有已装技能同步更新。
 
@@ -65,19 +78,19 @@ git clone <你的仓库地址> ~/.workbuddy/plugins/marketplaces/workbuddy-skill
 
 ### 用脚本（推荐）
 
-先在本地 `~/.workbuddy/skills/` 里开发好技能（含 `SKILL.md`，frontmatter 建议带 `name` / `description` / `version`），然后：
+先在本地开发好技能（含 `SKILL.md`，frontmatter 建议带 `name` / `description` / `version`），然后：
 
 ```bash
-./add-skill.sh ~/.workbuddy/skills/my-new-skill          # 描述自动从 SKILL.md 读取
-./add-skill.sh ~/.workbuddy/skills/my-new-skill "自定义描述"   # 或手动指定
+./add-skill.sh ~/.claude/skills/my-new-skill        # 描述自动从 SKILL.md 读取
+./add-skill.sh ~/.claude/skills/my-new-skill "自定义描述"  # 或手动指定
 ```
 
-脚本会：校验 → 复制进 `plugins/` → 自动更新 `marketplace.json` → 提示提交。
+脚本会：校验 → 复制进 `plugins/` → 自动更新 `marketplace.json`（可选索引）→ 提示提交。
 
 ### 手动
 
 1. 把技能目录放进 `plugins/<技能名>/`
-2. 在 `.codebuddy-plugin/marketplace.json` 的 `plugins` 数组加一条：
+2. 如需 CodeBuddy/WorkBuddy 市场支持，在 `.codebuddy-plugin/marketplace.json` 的 `plugins` 数组加一条：
 
 ```json
 {
@@ -102,10 +115,10 @@ git push
 
 ```bash
 # 1. 在 GitHub / Gitee / CNB 等平台新建一个空仓库（不要勾选初始化 README）
-#    复制仓库地址，例如 https://github.com/你的用户名/workbuddy-skills.git
+#    复制仓库地址，例如 https://github.com/你的用户名/skillbox.git
 
 # 2. 关联并推送
-git remote add origin https://github.com/你的用户名/workbuddy-skills.git
+git remote add origin https://github.com/你的用户名/skillbox.git
 git branch -M main
 git push -u origin main
 ```

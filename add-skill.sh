@@ -6,8 +6,8 @@
 #   ./add-skill.sh <源skill目录> ["描述文字(可选)"]
 #
 # 示例：
-#   ./add-skill.sh ~/.workbuddy/skills/my-new-skill
-#   ./add-skill.sh ~/.workbuddy/skills/my-new-skill "我的新技能：做某某事"
+#   ./add-skill.sh ~/.claude/skills/my-new-skill
+#   ./add-skill.sh ~/.claude/skills/my-new-skill "我的新技能：做某某事"
 #
 # 作用：
 #   1. 校验源目录包含 SKILL.md
