@@ -1,0 +1,21 @@
+{
+  "name": "workbuddy-skills",
+  "description": "个人 Skills 仓库：按需安装的 WorkBuddy 技能集（Java 规范、后续持续扩展）",
+  "owner": {
+    "name": "ironman"
+  },
+  "plugins": [
+    {
+      "name": "java-alibaba-dev-standard",
+      "description": "阿里《Java 开发手册（嵩山版）》强制编码规范。涵盖命名/常量/OOP/集合/并发/异常日志/单元测试/安全/MySQL/工程结构/设计规约共 308 条（强制181/推荐91/参考36），开发、评审、建表、写 SQL 时必须遵守",
+      "version": "1.0.0",
+      "source": "./plugins/java-alibaba-dev-standard"
+    },
+    {
+      "name": "fake-skill",
+      "description": "测试用假技能",
+      "version": "0.9.0",
+      "source": "./plugins/fake-skill"
+    }
+  ]
+}

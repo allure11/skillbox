@@ -1,0 +1,9 @@
+# 临时文件与系统文件
+.DS_Store
+*.log
+*.tmp
+__pycache__/
+*.pyc
+
+# 本地环境标记（不需要入库）
+.installed_skills/
