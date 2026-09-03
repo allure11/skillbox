@@ -12,6 +12,12 @@
       "source": "./plugins/java-alibaba-dev-standard"
     },
     {
+      "name": "vue-style-guide",
+      "description": "Vue 官方风格指南强制遵循技能。涵盖 A/B/C/D 四级共 26 条规则（Essential 5 / Strongly Recommended 15 / Recommended 4 / Use with Caution 2），覆盖组件命名、props/events 通信、模板指令、样式作用域、SFC 结构顺序，开发、评审 Vue 代码时必须遵守",
+      "version": "1.0.0",
+      "source": "./plugins/vue-style-guide"
+    },
+    {
       "name": "fake-skill",
       "description": "测试用假技能",
       "version": "0.9.0",

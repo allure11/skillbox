@@ -13,6 +13,7 @@
 | Skill | 说明 | 版本 |
 |---|---|---|
 | [java-alibaba-dev-standard](plugins/java-alibaba-dev-standard/) | 阿里《Java 开发手册（嵩山版）》强制编码规范，308 条规约（强制 181 / 推荐 91 / 参考 36），覆盖命名、集合、并发、异常日志、单测、安全、MySQL、工程结构、设计 | 1.0.0 |
+| [vue-style-guide](plugins/vue-style-guide/) | Vue 官方风格指南，26 条规则（A Essential 5 / B Strongly Recommended 15 / C Recommended 4 / D Use with Caution 2），覆盖组件命名、props/events 通信、模板指令、样式作用域、SFC 结构顺序 | 1.0.0 |
 
 > 后续新增技能直接 `./add-skill.sh` 发布，见下文。
 
