@@ -15,12 +15,31 @@
 #   2. 已存在的平台技能目录：~/.claude/skills > ~/.workbuddy/skills > ~/.codebuddy/skills
 #   3. 都未存在时默认 ~/.claude/skills（Claude Agent Skills 开源规范路径）
 #
+# 仓库内技能目录约定：
+#   plugins/<技能名>/skills/<技能名>/SKILL.md   标准插件布局（Claude Code / ZCode 通用）
+#   plugins/<技能名>/SKILL.md                   旧扁平布局，仍兼容
+#
 set -euo pipefail
 
 # ---------- 定位仓库根目录（脚本可从任意位置调用） ----------
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$SCRIPT_DIR"
 PLUGINS_DIR="$REPO_ROOT/plugins"
+
+# ---------- 解析技能所在目录 ----------
+# 标准插件布局（Claude Code / ZCode 通用）：plugins/<name>/skills/<name>/
+# 兼容旧扁平布局：plugins/<name>/
+skill_src() {
+  local name="$1"
+  [[ -z "$name" ]] && return 1
+  if [[ -f "$PLUGINS_DIR/$name/skills/$name/SKILL.md" ]]; then
+    echo "$PLUGINS_DIR/$name/skills/$name"
+  elif [[ -f "$PLUGINS_DIR/$name/SKILL.md" ]]; then
+    echo "$PLUGINS_DIR/$name"
+  else
+    return 1
+  fi
+}
 
 # ---------- 检测目标技能目录 ----------
 detect_skills_home() {
@@ -48,12 +67,13 @@ err()  { echo "${C_RED}✘${C_RESET} $1" >&2; }
 
 # ---------- 列出所有可用 skill ----------
 list_skills() {
-  local dir name
+  local dir name src
   local -a names=()
   for dir in "$PLUGINS_DIR"/*/; do
     [[ -d "$dir" ]] || continue
     name="$(basename "$dir")"
-    [[ -f "$dir/SKILL.md" ]] && names+=("$name")
+    src="$(skill_src "$name" || true)"
+    [[ -n "$src" ]] && names+=("$name")
   done
   if [[ ${#names[@]} -eq 0 ]]; then
     warn "仓库中没有任何可安装的 skill（plugins/ 下为空）"
@@ -63,8 +83,11 @@ list_skills() {
   local i=1
   for name in "${names[@]}"; do
     local desc=""
+    src="$(skill_src "$name")"
     # 尝试从 SKILL.md frontmatter 提取 description
-    desc="$(awk '/^description:/{sub(/^description:[[:space:]]*/,""); print; exit}' "$PLUGINS_DIR/$name/SKILL.md" 2>/dev/null || true)"
+    desc="$(awk '/^description:/{sub(/^description:[[:space:]]*/,""); print; exit}' "$src/SKILL.md" 2>/dev/null || true)"
+    # 完整描述含大量触发词，列表里只显示首个句号前的内容
+    [[ "$desc" == *。* ]] && desc="${desc%%。*}。"
     printf '  %2d) %-28s %s\n' "$i" "$name" "$desc"
     i=$((i+1))
   done
@@ -75,14 +98,15 @@ is_valid_skill() {
   local name="$1"
   [[ -z "$name" ]] && return 1
   [[ "$name" == *"/"* || "$name" == *".."* || "$name" == "." || "$name" == *"\\"* ]] && return 1
-  [[ -d "$PLUGINS_DIR/$name" && -f "$PLUGINS_DIR/$name/SKILL.md" ]]
+  skill_src "$name" >/dev/null 2>&1
 }
 
 # ---------- 安装单个 skill ----------
 install_one() {
   local name="$1" link_mode="$2" force="$3"
-  local src="$PLUGINS_DIR/$name"
-  local dest="$SKILLS_HOME/$name"
+  local src dest
+  src="$(skill_src "$name")" || { err "找不到 skill：$name"; return 1; }
+  dest="$SKILLS_HOME/$name"
 
   if [[ -e "$dest" ]]; then
     if [[ "$force" == "1" ]]; then
@@ -130,7 +154,9 @@ interactive_install() {
   [[ -z "$sel" ]] && { warn "未选择，退出"; return 0; }
   local -a ALL=() name
   for dir in "$PLUGINS_DIR"/*/; do
-    [[ -d "$dir" && -f "$dir/SKILL.md" ]] && ALL+=("$(basename "$dir")")
+    [[ -d "$dir" ]] || continue
+    name="$(basename "$dir")"
+    [[ -n "$(skill_src "$name" || true)" ]] && ALL+=("$name")
   done
   IFS=',' read -ra IDX <<< "$sel"
   local i idx nm

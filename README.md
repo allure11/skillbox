@@ -12,9 +12,9 @@
 
 | Skill | 说明 | 版本 |
 |---|---|---|
-| [java-alibaba-dev-standard](plugins/java-alibaba-dev-standard/) | 阿里《Java 开发手册（嵩山版）》强制编码规范，308 条规约（强制 181 / 推荐 91 / 参考 36），覆盖命名、集合、并发、异常日志、单测、安全、MySQL、工程结构、设计 | 1.0.0 |
-| [vue-style-guide](plugins/vue-style-guide/) | Vue 官方风格指南，26 条规则（A Essential 5 / B Strongly Recommended 15 / C Recommended 4 / D Use with Caution 2），覆盖组件命名、props/events 通信、模板指令、样式作用域、SFC 结构顺序 | 1.0.0 |
-| [apple-hig-ui-standard](plugins/apple-hig-ui-standard/) | Apple《人机界面指南》(HIG) UI/交互设计规范，107 条核心强制条款 + **17 个分领域参考**（设计原则、布局、字体排印、颜色与深色模式、无障碍、组件、动效反馈、交互模式、文案与素材、材质与 Liquid Glass 含滚动边缘效果、包容性/隐私/RTL、输入方式、组件细则含边栏、模式细则、AI 与商业化、平台与游戏含 iPhone Duo、官方全量索引），含点击目标尺寸、对比度、字号等硬性数值 | 1.2.0 |
+| [java-alibaba-dev-standard](plugins/java-alibaba-dev-standard/skills/java-alibaba-dev-standard/) | 阿里《Java 开发手册（嵩山版）》强制编码规范，308 条规约（强制 181 / 推荐 91 / 参考 36），覆盖命名、集合、并发、异常日志、单测、安全、MySQL、工程结构、设计 | 1.0.0 |
+| [vue-style-guide](plugins/vue-style-guide/skills/vue-style-guide/) | Vue 官方风格指南，26 条规则（A Essential 5 / B Strongly Recommended 15 / C Recommended 4 / D Use with Caution 2），覆盖组件命名、props/events 通信、模板指令、样式作用域、SFC 结构顺序 | 1.0.0 |
+| [apple-hig-ui-standard](plugins/apple-hig-ui-standard/skills/apple-hig-ui-standard/) | Apple《人机界面指南》(HIG) UI/交互设计规范，107 条核心强制条款 + **17 个分领域参考**（设计原则、布局、字体排印、颜色与深色模式、无障碍、组件、动效反馈、交互模式、文案与素材、材质与 Liquid Glass 含滚动边缘效果、包容性/隐私/RTL、输入方式、组件细则含边栏、模式细则、AI 与商业化、平台与游戏含 iPhone Duo、官方全量索引），含点击目标尺寸、对比度、字号等硬性数值 | 1.2.0 |
 
 > 后续新增技能直接 `./add-skill.sh` 发布，见下文。
 
@@ -24,18 +24,29 @@
 
 ```
 skillbox/
-├── plugins/                        # 所有技能本体，每个技能一个目录
-│   ├── java-alibaba-dev-standard/
-│   │   ├── SKILL.md                # 技能主文件（frontmatter 含 name/description/version）
-│   │   └── references/             # 按需查阅的辅助文档
-│   ├── vue-style-guide/
-│   └── apple-hig-ui-standard/
+├── marketplace.json                # 市场清单（ZCode / Claude Code / VS Code 探测点）
+├── .claude-plugin/
+│   └── marketplace.json            # 同一份清单（ZCode / Claude Code 优先探测此路径）
 ├── .codebuddy-plugin/
-│   └── marketplace.json            # [可选] CodeBuddy/WorkBuddy 市场索引
+│   └── marketplace.json            # WorkBuddy / CodeBuddy 市场索引
+├── plugins/                        # 所有插件本体，每个技能一个插件目录
+│   └── java-alibaba-dev-standard/
+│       ├── .zcode-plugin/
+│       │   └── plugin.json         # 插件清单（ZCode 优先）
+│       ├── .claude-plugin/
+│       │   └── plugin.json         # 同一份清单（Claude Code 兼容）
+│       └── skills/
+│           └── java-alibaba-dev-standard/
+│               ├── SKILL.md        # 技能主文件（frontmatter 含 name/description/version）
+│               └── references/     # 按需查阅的辅助文档
 ├── install.sh                      # 按需安装脚本（任何机器、任何平台可用）
 ├── add-skill.sh                    # 发布新技能进仓库
 └── README.md
 ```
+
+> 为什么是 `plugins/<名>/skills/<名>/SKILL.md` 这个层级？这是 **Claude Code / ZCode 插件规范**的标准布局：
+> 插件根目录放 `plugin.json`，技能放在 `skills/` 下。ZCode 与 Claude Code 的插件市场都按此约定发现技能，
+> 而 `install.sh` 会把它摊平成 `<技能目录>/SKILL.md` 装到各平台的 skills 目录，两边都符合各自规范。
 
 ---
 
@@ -89,26 +100,46 @@ git clone <你的仓库地址> ~/.workbuddy/plugins/marketplaces/skillbox
 ./add-skill.sh ~/.claude/skills/my-new-skill "自定义描述"  # 或手动指定
 ```
 
-脚本会：校验 → 复制进 `plugins/` → 自动更新 `marketplace.json`（可选索引）→ 提示提交。
+脚本会：校验 → 复制进 `plugins/<技能名>/skills/<技能名>/` → 生成 `plugin.json` → 同步三份市场清单 → 提示提交。
 
 ### 手动
 
-1. 把技能目录放进 `plugins/<技能名>/`
-2. 如需 CodeBuddy/WorkBuddy 市场支持，在 `.codebuddy-plugin/marketplace.json` 的 `plugins` 数组加一条：
+1. 把技能内容放进 `plugins/<技能名>/skills/<技能名>/`（`SKILL.md` + 可选 `references/`）
+2. 加插件清单 `plugins/<技能名>/.zcode-plugin/plugin.json`（同时复制一份到 `.claude-plugin/plugin.json`）：
 
 ```json
 {
   "name": "my-new-skill",
-  "description": "技能简介（搜索时显示）",
   "version": "1.0.0",
-  "source": "./plugins/my-new-skill"
+  "description": "技能简介（插件管理界面显示）",
+  "author": { "name": "ironman" }
 }
 ```
+
+3. 在**三份**市场清单的 `plugins` 数组各加一条同样内容（三份必须保持一致）：
+
+```json
+{
+  "name": "my-new-skill",
+  "source": "./plugins/my-new-skill",
+  "description": "技能简介（搜索时显示）",
+  "version": "1.0.0"
+}
+```
+
+| 清单文件 | 谁读它 |
+|---|---|
+| `marketplace.json` | ZCode（兜底探测）、Claude Code、VS Code / Copilot CLI |
+| `.claude-plugin/marketplace.json` | **ZCode（优先探测）**、Claude Code |
+| `.codebuddy-plugin/marketplace.json` | WorkBuddy / CodeBuddy |
+
+> ⚠️ **版本号必须两处同步**：ZCode 判断「是否有更新」时，用市场清单里的 `version` 跟已装的 `plugin.json` 里的 `version` 比对。
+> 只改了 `plugin.json` 而没改 `marketplace.json` 的 `version`，用户永远收不到更新提示。
 
 ### 提交推送
 
 ```bash
-git add plugins/ .codebuddy-plugin/marketplace.json
+git add plugins/ marketplace.json .claude-plugin/ .codebuddy-plugin/
 git commit -m "feat(skill): add my-new-skill"
 git push
 ```

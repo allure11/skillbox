@@ -1,0 +1,16 @@
+{
+  "name": "java-alibaba-dev-standard",
+  "version": "1.0.0",
+  "description": "阿里《Java 开发手册（嵩山版）》强制编码规范，308 条规约（强制 181 / 推荐 91 / 参考 36），覆盖命名、OOP、集合、并发、异常日志、单元测试、安全、MySQL 建表、工程结构与设计",
+  "author": {
+    "name": "ironman"
+  },
+  "keywords": [
+    "java",
+    "alibaba",
+    "coding-standard",
+    "mysql",
+    "code-review",
+    "spring"
+  ]
+}

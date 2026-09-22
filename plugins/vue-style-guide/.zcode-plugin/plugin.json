@@ -1,0 +1,16 @@
+{
+  "name": "vue-style-guide",
+  "version": "1.0.0",
+  "description": "Vue 官方风格指南（Vue 3 Style Guide）强制规范，26 条规则分 A/B/C/D 四级（Essential 5 / Strongly Recommended 15 / Recommended 4 / Use with Caution 2），覆盖组件命名、props/events 通信、模板指令、样式作用域、SFC 结构顺序",
+  "author": {
+    "name": "ironman"
+  },
+  "keywords": [
+    "vue",
+    "vue3",
+    "frontend",
+    "coding-standard",
+    "sfc",
+    "code-review"
+  ]
+}

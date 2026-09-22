@@ -1,27 +1,57 @@
 {
-  "name": "workbuddy-skills",
-  "description": "个人 Skills 仓库：按需安装的 WorkBuddy 技能集（Java 规范、Vue 规范、Apple HIG 设计规范）",
+  "name": "skillbox",
+  "description": "个人 AI 技能库：可插拔的编码规范与设计规范技能集（Java 阿里规范、Vue 风格指南、Apple HIG 设计规范）",
   "owner": {
     "name": "ironman"
   },
   "plugins": [
     {
       "name": "java-alibaba-dev-standard",
+      "source": "./plugins/java-alibaba-dev-standard",
       "description": "阿里《Java 开发手册（嵩山版）》强制编码规范，308 条规约（强制 181 / 推荐 91 / 参考 36），覆盖命名、OOP、集合、并发、异常日志、单元测试、安全、MySQL 建表、工程结构与设计",
       "version": "1.0.0",
-      "source": "./plugins/java-alibaba-dev-standard"
+      "category": "developer-tools",
+      "tags": [
+        "java",
+        "alibaba",
+        "coding-standard",
+        "mysql",
+        "code-review",
+        "spring"
+      ]
     },
     {
       "name": "vue-style-guide",
+      "source": "./plugins/vue-style-guide",
       "description": "Vue 官方风格指南（Vue 3 Style Guide）强制规范，26 条规则分 A/B/C/D 四级（Essential 5 / Strongly Recommended 15 / Recommended 4 / Use with Caution 2），覆盖组件命名、props/events 通信、模板指令、样式作用域、SFC 结构顺序",
       "version": "1.0.0",
-      "source": "./plugins/vue-style-guide"
+      "category": "developer-tools",
+      "tags": [
+        "vue",
+        "vue3",
+        "frontend",
+        "coding-standard",
+        "sfc",
+        "code-review"
+      ]
     },
     {
       "name": "apple-hig-ui-standard",
+      "source": "./plugins/apple-hig-ui-standard",
       "description": "Apple《人机界面指南》(HIG) UI/交互设计规范，107 条核心强制条款 + 17 个分领域参考文档，覆盖设计原则、布局安全区、字体排印、颜色与深色模式、无障碍、Liquid Glass 与材质、组件与模式、输入方式、各平台与游戏设计，含点击目标尺寸、对比度、字号等硬性数值",
       "version": "1.2.0",
-      "source": "./plugins/apple-hig-ui-standard"
+      "category": "design",
+      "tags": [
+        "ui",
+        "ux",
+        "apple",
+        "hig",
+        "ios",
+        "macos",
+        "design-review",
+        "liquid-glass",
+        "accessibility"
+      ]
     }
   ]
 }

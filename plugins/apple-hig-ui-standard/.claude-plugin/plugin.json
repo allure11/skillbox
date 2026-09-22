@@ -1,0 +1,19 @@
+{
+  "name": "apple-hig-ui-standard",
+  "version": "1.2.0",
+  "description": "Apple《人机界面指南》(HIG) UI/交互设计规范，107 条核心强制条款 + 17 个分领域参考文档，覆盖设计原则、布局安全区、字体排印、颜色与深色模式、无障碍、Liquid Glass 与材质、组件与模式、输入方式、各平台与游戏设计，含点击目标尺寸、对比度、字号等硬性数值",
+  "author": {
+    "name": "ironman"
+  },
+  "keywords": [
+    "ui",
+    "ux",
+    "apple",
+    "hig",
+    "ios",
+    "macos",
+    "design-review",
+    "liquid-glass",
+    "accessibility"
+  ]
+}
