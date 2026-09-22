@@ -14,7 +14,7 @@
 |---|---|---|
 | [java-alibaba-dev-standard](plugins/java-alibaba-dev-standard/) | 阿里《Java 开发手册（嵩山版）》强制编码规范，308 条规约（强制 181 / 推荐 91 / 参考 36），覆盖命名、集合、并发、异常日志、单测、安全、MySQL、工程结构、设计 | 1.0.0 |
 | [vue-style-guide](plugins/vue-style-guide/) | Vue 官方风格指南，26 条规则（A Essential 5 / B Strongly Recommended 15 / C Recommended 4 / D Use with Caution 2），覆盖组件命名、props/events 通信、模板指令、样式作用域、SFC 结构顺序 | 1.0.0 |
-| [apple-hig-ui-standard](plugins/apple-hig-ui-standard/) | Apple《人机界面指南》(HIG) UI/交互设计规范，35 条核心强制条款 + 9 个分领域参考（设计原则、布局、字体排印、颜色与深色模式、无障碍、组件、动效反馈、交互模式、官方索引），含点击目标尺寸、对比度、字号等硬性数值 | 1.0.0 |
+| [apple-hig-ui-standard](plugins/apple-hig-ui-standard/) | Apple《人机界面指南》(HIG) UI/交互设计规范，7 大类核心强制条款 + **17 个分领域参考**（设计原则、布局、字体排印、颜色与深色模式、无障碍、组件、动效反馈、交互模式、文案与素材、材质与 Liquid Glass、包容性/隐私/RTL、输入方式、组件细则、模式细则、AI 与商业化、平台与游戏、官方全量索引），含点击目标尺寸、对比度、字号等硬性数值 | 1.1.0 |
 
 > 后续新增技能直接 `./add-skill.sh` 发布，见下文。
 
@@ -25,9 +25,11 @@
 ```
 skillbox/
 ├── plugins/                        # 所有技能本体，每个技能一个目录
-│   └── java-alibaba-dev-standard/
-│       ├── SKILL.md                # 技能主文件（frontmatter 含 name/description/version）
-│       └── references/             # 按需查阅的辅助文档
+│   ├── java-alibaba-dev-standard/
+│   │   ├── SKILL.md                # 技能主文件（frontmatter 含 name/description/version）
+│   │   └── references/             # 按需查阅的辅助文档
+│   ├── vue-style-guide/
+│   └── apple-hig-ui-standard/
 ├── .codebuddy-plugin/
 │   └── marketplace.json            # [可选] CodeBuddy/WorkBuddy 市场索引
 ├── install.sh                      # 按需安装脚本（任何机器、任何平台可用）
