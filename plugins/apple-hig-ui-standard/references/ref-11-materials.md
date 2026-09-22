@@ -31,6 +31,35 @@ Apple 平台有两种材质：**Liquid Glass** 与**标准材质**。
   - 底层内容**明亮** → 考虑添加**不透明度 35% 的暗层**；
   - 底层内容**足够暗**，或使用 AVKit 自带暗层的标准媒体播放控制 → **无需暗层**。
 
+4. **元素尺寸决定 Liquid Glass 的不透明程度与自适配行为。**【推荐】
+
+| 元素规模 | 典型组件 | Liquid Glass 行为 |
+|---|---|---|
+| **小元素** | 工具栏、标签页栏 | 系统可在**浅色与深色外观间自动适配**，以响应底层内容；其上的符号与文本**默认遵循单色方案**——底层内容为浅色时变得**更深**，底层内容为深色时变得**更浅** |
+| **大元素** | 边栏 | 看起来**更不透明**，以在复杂背景上保持易读性，并适应材质表面上更为丰富的内容 |
+
+5. **边栏必须悬浮于内容之上的 Liquid Glass 层中，并延伸其下方的丰富视觉内容。**【推荐】
+   在 iOS、iPadOS 和 macOS 中，边栏与工具栏、标签页栏一样悬浮在 Liquid Glass 层。
+   为强化分离感，可采用两种方式之一延伸边栏下方的内容：
+   - 让边栏**水平滚动**；或
+   - 应用**背景延伸效果**——该效果会**镜像相邻内容**，给人一种把内容拉伸到边栏下方的感觉。
+
+6. **Liquid Glass 的动效会随输入方式自适应。**【推荐】
+   Liquid Glass 在移动时对**直接触控**交互以**更强烈**的方式响应（加强触觉体验），
+   对使用**触控板**交互的用户则表现得更**轻柔**。系统组件自动处理，自定义动效须自行考虑此差异。
+
+### Liquid Glass 实现 API 速查（供落地时核对）
+
+| 能力 | SwiftUI / UIKit / AppKit |
+|---|---|
+| 应用玻璃效果到自定义视图 | `glassEffect(_:in:)` |
+| 玻璃变体 | `Glass.regular` / `Glass.clear` |
+| 滚动边缘效果样式 | `ScrollEdgeEffectStyle`、`UIScrollEdgeEffect.Style`、`NSScrollEdgeEffectStyle` |
+| 边栏背景延伸 | `backgroundExtensionEffect()` |
+| 系统材质 | `Material`（SwiftUI）、`UIVisualEffectView`（UIKit）、`NSVisualEffectView`（AppKit） |
+| 官方迁移指南 | [Adopting Liquid Glass](https://developer.apple.com/documentation/technologyoverviews/adopting-liquid-glass) |
+| WWDC 视频 | `wwdc2025/219`、`wwdc2025/356` |
+
 ## 二、标准材质（Standard materials）
 
 使用标准材质与效果（`blur`、`vibrancy`、`blending modes`）为 Liquid Glass 下方的内容传达结构感。
@@ -45,7 +74,40 @@ Apple 平台有两种材质：**Liquid Glass** 与**标准材质**。
   - **较厚的材质更不透明**，为文本和精细特征提供更好对比度；
   - **较薄的材质半透明效果更强**，可通过显示背景内容提醒用户所处环境。
 
-## 三、平台考量因素
+## 三、滚动边缘效果（Scroll edge effects）【强制】
+
+> 来源：Apple HIG《滚动视图 · 滚动边缘效果》小节（2026-06-08 更新）。
+> 官方定位：滚动边缘效果是 **Liquid Glass 体系的关键配套机制**——
+> 它替代了传统的"给工具栏加背景色"做法，在**悬浮控制层**与**其后的滚动内容**之间提供视觉分离。
+> 官方样式参考：[`ScrollEdgeEffectStyle`](https://developer.apple.com/documentation/swiftui/scrolledgeeffectstyle)、
+> [`UIScrollEdgeEffect.Style`](https://developer.apple.com/documentation/uikit/uiscrolledgeeffect/style-swift.class)、
+> [`NSScrollEdgeEffectStyle`](https://developer.apple.com/documentation/appkit/nsscrolledgeeffectstyle)。
+
+**定义**：在 iOS、iPadOS 和 macOS 中，滚动边缘效果在**工具栏等特定界面元素**及其**后面的滚动内容区域**之间提供视觉分离。
+
+1. **优先采用「自动」滚动边缘效果样式。**【强制】
+   可用时使用默认的 `automatic` 样式。该样式提供**更不透明的视觉分离**，适用于：
+   - 包含**大量控制的顶部工具栏**；
+   - 在 **Liquid Glass 控制之外显示的文本**；
+   - **固定表格标题**。
+
+   ⚠️ 若改用**软（soft）**样式，**必须全面测试界面**，确保控制在各种语境中均保持易读性。
+   样式取值：`automatic`（自动，默认）/ `hard`（硬）/ `soft`（软）。
+
+2. **仅当滚动视图位于悬浮界面元素之后时，才使用滚动边缘效果。**【强制】
+   滚动边缘效果**并非装饰性效果**，**不会像叠层那样遮挡或变暗**——
+   它的存在意义是确保控制在视觉上保持清晰可见。不得当作装饰滥用。
+
+3. **每个视图只应用一个滚动边缘效果。**【强制】
+   在 iPad 和 Mac 上的**拆分视图布局**中，每个面板可以各有自己的滚动边缘效果；
+   此时**必须保持其高度一致**以保持对齐。
+
+4. **不要用自定义工具栏背景替代滚动边缘效果。**【强制】
+   自定义背景与外观**可能会覆盖或干扰系统提供的背景效果**。
+   应改用**内容层**来传达工具栏的颜色和外观，并按需使用 `ScrollEdgeEffectStyle` 区分工具栏区域与内容区域——
+   这样既能让 App 展现个性，又不会分散对内容的注意力。
+
+## 四、平台考量因素
 
 ### iOS、iPadOS
 除 Liquid Glass 外继续提供四种标准材质，用于内容层的视觉差异：`ultraThin`、`thin`、`regular`（默认）、`thick`。

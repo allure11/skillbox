@@ -17,6 +17,21 @@
 | 针对 visionOS 设计 | `/designing-for-visionos` | ✅ `ref-17-platforms-games.md` |
 | 针对 watchOS 设计 | `/designing-for-watchos` | ✅ `ref-17-platforms-games.md` |
 | 针对游戏设计 | `/designing-for-games` | ✅ `ref-17-platforms-games.md` |
+| **针对 iPhone Duo 设计**（折叠屏，2026-09-09 新增） | `/designing-for-iphone-duo` | ✅ `ref-17-platforms-games.md` |
+
+## 一之二、官方「全新和更新内容」区块（最近更新重点）
+
+> 官方首页自 2026 年起设有「**全新和更新内容**」区块，专门推广最近修订的主题。
+> 核查技能时效性时**应先看这一区块**，再逐页比对。截至 2026-09 的 6 个重点主题：
+
+| 主题 | 链接 | 本技能覆盖 |
+|---|---|---|
+| 菜单 `menus` | `/menus` | ✅ `ref-14-components.md` 第三节 |
+| **滚动视图 `scroll-views`**（含**滚动边缘效果**） | `/scroll-views` | ✅ `ref-11-materials.md` 第三节 |
+| 搜索栏 `search-fields` | `/search-fields` | ✅ `ref-14-components.md` 第七节 |
+| **边栏 `sidebars`** | `/sidebars` | ✅ `ref-14-components.md` 第十一节 |
+| Siri `siri`（为 Siri AI 修订） | `/siri` | 索引（技术类） |
+| 片段 `snippets`（2026-06-08 新页面） | `/snippets` | 清单（`ref-14` 系统体验） |
 
 ## 二、基础（Foundations · 18 项）
 
@@ -80,7 +95,7 @@
 | **内容** | `/content` | 图表、图像视图、文本视图、网页视图 | 清单（`ref-14`） |
 | **布局和组织** | `/layout-and-organization` | 盒子、集合、列表和表格、标签、显示控制、联锁、分栏视图、大纲视图、拆分视图、标签页视图 | ✅ 列表和表格（`ref-14`） |
 | **菜单和操作** | `/menus-and-actions` | 活动视图、按钮、上下文菜单、程序坞菜单、编辑菜单、主屏幕快速操作、菜单、挂饰、弹出式按钮、下拉式按钮、菜单栏、工具栏 | ✅ 菜单、工具栏（`ref-14`）；按钮（`ref-06`） |
-| **导览和搜索** | `/navigation-and-search` | 路径控制、搜索栏、边栏、标签页栏、令牌栏 | ✅ 搜索栏、标签页栏（`ref-14`） |
+| **导览和搜索** | `/navigation-and-search` | 路径控制、搜索栏、边栏、标签页栏、令牌栏 | ✅ 搜索栏、标签页栏、**边栏**（`ref-14`） |
 | **呈现方式** | `/presentation` | 操作表单、提醒、表单、弹出窗口、窗口 | ✅ 提醒、弹出窗口（`ref-14`） |
 | **选择和输入** | `/selection-and-input` | 颜色池、组合框、数字输入视图、图像池、选择器、分段控制、滑块、步进器、文本栏、切换、虚拟键盘 | ✅ 文本栏、切换（`ref-14`） |
 | **状态** | `/status` | 活动圆环、仪表、进度指示符、评分指示器 | 清单（`ref-14`）；进度见 `ref-07` |
@@ -158,12 +173,20 @@
 
 1. 本技能 `ref-01` ~ `ref-17` 覆盖了**高频、可量化、易踩坑**的全部规约，日常任务足够。
 2. 遇到下列情况必须回到官方原文：
-   - 需要**具体组件的完整规则**（颜色池、组合框、路径控制、边栏、令牌栏、挂饰、窗口、仪表等）
+   - 需要**具体组件的完整规则**（颜色池、组合框、路径控制、令牌栏、挂饰、窗口、仪表、分段控制等）
    - 需要**平台专属数值**（新机型尺寸、tvOS 网格各列规格、visionOS 尺寸级别）
    - 需要**最新变更**（HIG 随系统版本更新，如 Liquid Glass 材质、新机型规格、生成式 AI 指南）
    - 需要**技术整合的完整规则**（Apple Pay、HealthKit、HomeKit、CarPlay、Siri、NFC、地图等）
-3. 抓取官方页面时注意区分**中文版与英文版**：
+3. **Liquid Glass 是本技能的跨文件主题**，核查时要一并看：
+   `ref-11`（材质本体 + 滚动边缘效果 + 实现 API）、`ref-04`（Liquid Glass 颜色）、
+   `ref-14`（工具栏 / 标签页栏 / 边栏）、`ref-07`（动效随输入方式自适应）、`ref-06`（按钮玻璃材质）。
+4. 抓取官方页面时注意区分**中文版与英文版**：
    - 中文版：`developer.apple.com/cn/design/human-interface-guidelines/<topic>`
    - 英文版：`developer.apple.com/design/human-interface-guidelines/<topic>`
    - ⚠️ 部分页面（如 `/right-to-left`、`/system-experiences`）在中文版下可能动态渲染导致抓取不全，
      此时**改用英文版路径**可获得完整内容。
+   - ⚠️ 实测 `/designing-for-iphone-duo`（2026-09 新增）**中文版无法抓取**，须用英文路径
+     `developer.apple.com/design/human-interface-guidelines/designing-for-iphone-duo`。
+5. **核查时效性的正确顺序**：先看官方「新功能」页（`developer.apple.com/design/whats-new/`）
+   → 再看首页「全新和更新内容」区块 → 最后逐页比对 `references/`。
+   各页面底部的**更改日志**是判断某领域是否被修订的最可靠依据。
