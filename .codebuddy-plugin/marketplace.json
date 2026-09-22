@@ -18,6 +18,12 @@
       "source": "./plugins/vue-style-guide"
     },
     {
+      "name": "apple-hig-ui-standard",
+      "description": "Apple《人机界面指南》(HIG) UI/交互设计规范。覆盖设计原则、布局与安全区、字体排印与动态字体、颜色与深色模式、无障碍、组件与按钮、动效与反馈、交互模式九大领域，含点击目标尺寸、对比度、字号等硬性数值约束，做 UI 设计、界面评审、多平台适配时必须遵守",
+      "version": "1.0.0",
+      "source": "./plugins/apple-hig-ui-standard"
+    },
+    {
       "name": "fake-skill",
       "description": "测试用假技能",
       "version": "0.9.0",
